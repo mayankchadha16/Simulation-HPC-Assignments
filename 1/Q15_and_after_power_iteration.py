@@ -1,42 +1,65 @@
-import numpy as np 
+# Power Method to Find Largest Eigen Value and Eigen Vector
+# Importing NumPy Library
+import numpy as np
+import sys
 
-# Define the matrix A 
-A = np.array([[1, 2, -2], [-2, 5, -2], [-6, 6, -3]]) 
+# Reading order of matrix
+n = int(input('Enter order of matrix: '))
 
-# Choose the initial vector x 
-x = np.array([[1, 1, 1]]).T 
+# Making numpy array of n x n size and initializing
+# to zero for storing matrix
+a = np.zeros((n, n))
 
-# Define the tolerance for the eigenvalue 
-# and eigenvector approximations 
-# (i.e. the maximum allowed difference between 
-# the approximations and the actual values) 
-tol = 1e-6
+# Reading matrix
+print('Enter Matrix Coefficients:')
+for i in range(n):
+    for j in range(n):
+        a[i][j] = float(input('a['+str(i)+'][' + str(j)+']='))
 
-# Define the maximum number of iterations 
-max_iter = 100
+# Making numpy array n x 1 size and initializing to zero
+# for storing initial guess vector
+x = np.zeros((n))
 
-# Define the variable lam_prev to store the 
-# previous approximation for the largest eigenvalue 
-lam_prev = 0
+# Reading initial guess vector
+print('Enter initial guess vector: ')
+for i in range(n):
+    x[i] = float(input('x['+str(i)+']='))
 
-# Iteratively improve the approximations 
-# for the largest eigenvalue and eigenvector 
-# using the power method 
-for i in range(max_iter): 
-	# Compute the updated approximation for the eigenvector 
-	x = A @ x / np.linalg.norm(A @ x) 
+# Reading tolerable error
+tolerable_error = 0.0001
 
-	# Compute the updated approximation for the largest eigenvalue 
-	lam = (x.T @ A @ x) / (x.T @ x) 
+# Reading maximum number of steps
+max_iteration = int(input('Enter maximum number of steps: '))
 
-	# Check if the approximations have converged 
-	if np.abs(lam - lam_prev) < tol: 
-		break
+# Power Method Implementation
+lambda_old = 1.0
+condition = True
+step = 1
+while condition:
+    # Multiplying a and x
+    x = np.matmul(a, x)
 
-	# Store the current approximation for the largest eigenvalue 
-	lam_prev = lam 
+    # Finding new Eigen value and Eigen vector
+    lambda_new = max(abs(x))
 
-# Print the approximations for the 
-# largest eigenvalue and eigenvector 
-print(float(lam)) 
-print(x) 
+    x = x/lambda_new
+
+    # Displaying Eigen value and Eigen Vector
+    print('\nSTEP %d' % (step))
+    print('----------')
+    print('Eigen Value = %0.4f' % (lambda_new))
+    print('Eigen Vector: ')
+    for i in range(n):
+        print('%0.3f\t' % (x[i]))
+
+    # Checking maximum iteration
+    step = step + 1
+    if step > max_iteration:
+        print('Not convergent in given maximum iteration!')
+        break
+
+    # Calculating error
+    error = abs(lambda_new - lambda_old)
+    print('errror=' + str(error))
+    lambda_old = lambda_new
+    condition = error > tolerable_error
